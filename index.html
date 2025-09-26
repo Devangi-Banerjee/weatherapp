@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .weather-card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+    input {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-left: 5px;
+      background: #2193b0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #176f82;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .error {
+      margin-top: 15px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-card">
+    <h2>🌦 Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name" />
+    <button onclick="getWeather()">Search</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("city").value;
+      const output = document.getElementById("output");
+      output.innerHTML = "Loading...";
+
+      try {
+        const response = await fetch(
+          `http://api.weatherapi.com/v1/current.json?key=bd6a0be9f00b451faf3165646252509&q=${city}&aqi=no`
+        );
+        if (!response.ok) throw new Error("City not found");
+        
+        const data = await response.json();
+        output.innerHTML = `
+          <div class="result">
+            <p><strong>${data.location.name}, ${data.location.country}</strong></p>
+            <p>${data.current.temp_c}°C</p>
+            <p>${data.current.condition.text}</p>
+            <img src="${data.current.condition.icon}" alt="weather icon" />
+          </div>
+        `;
+      } catch (error) {
+        output.innerHTML = `<p class="error">${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
